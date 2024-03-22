@@ -1,0 +1,60 @@
+{
+  {
+    "title": "Attack",
+    "cost": [
+      {
+        "color": "red",
+        "amount": 1
+      }
+    ],
+    "text": "Deal 1 damage to the enemy.",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "title": "Defend",
+    "cost": [
+      {
+        "color": "blue",
+        "amount": 1
+      }
+    ],
+    "text": "Gain 1 defense.",
+    "effects": [
+      {
+        "type": "defense",
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "title": "Heal",
+    "cost": [
+      {
+        "color": "green",
+        "amount": 1
+      }
+    ],
+    "text": "Gain 1 health.",
+    "effects": [
+      {
+        "type": "health",
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "title": "Red Source",
+    "cost": [],
+    "text": "Gain 1 attack.",
+    "effects": [
+      {
+        "type": "gain"
+      }
+    ]
+  }
+}
