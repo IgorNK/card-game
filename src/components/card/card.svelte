@@ -1,5 +1,14 @@
 <script lang="ts">
-  export let title = "Rend";
+  import type { TCard } from "../../types";
+  import { TPile } from "../../types";
+  export let card: TCard = {
+    uid: 0,
+    title: "",
+    cost: [],
+    text: "",
+    effects: [],
+    pile: null,
+  };
   export let flipped = false;
 </script>
 
@@ -17,16 +26,16 @@
       </slot>
     </div>
     <div class="title">
-      <i>{title}</i>
+      <i>{card.title}</i>
     </div>
     <div class="image">
       <slot name="image">
         <span class="symbol">♠</span>
       </slot>
     </div>
-    <div class="description">
-      <slot name="description" class="description">
-        <p>Attack: 1</p>
+    <div class="text">
+      <slot name="text" class="textn">
+        <p>{card.text}</p>
       </slot>
     </div>
   </div>
@@ -127,7 +136,7 @@
     justify-content: center;
   }
 
-  .description {
+  .text {
     height: 50%;
     width: 100%;
     display: flex;

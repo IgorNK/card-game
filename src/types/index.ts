@@ -1,6 +1,8 @@
-import TCard from './card';
-import TCost from './cost';
-import TEffect from './effect';
-import TPile from './pile';
+import type { TCard } from './card';
+import type { TCost } from './cost';
+import type { TEffect } from './effect';
+import type { TEnemy } from './enemy';
+import type { TPlayerStats } from './player-stats';
+import { TPile } from './pile';
 
-export { TCard, TCost, TEffect, TPile };
+export { TCard, TCost, TEffect, TEnemy, TPlayerStats, TPile };
