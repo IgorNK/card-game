@@ -2,19 +2,19 @@
   import Deck from '../components/deck/deck.svelte';
   import Card from '../components/card/card.svelte';
   import  * as cardsData from "../store/cards.json";
-  import { TPile, TCard } from "../types";
+  import { TPile, TCard, TCost, TEffect } from "../types";
   let deck: Array<TCard> = Array.from(cardsData.cards).map(data => {
     return {
       title: data.title,
-      cost: Array.from(data.cost),
+      cost: data.cost,
       text: data.text,
-      effects: Array<TEffect>,
-      pile: TPile,
+      effects: data.effects,
+      pile: null,
     }
   });
   let use = [];
   let drop = [];
-  let cards: Array<TCard> = [ {...deck[0], pile: TPile.hand}, {...deck[0], pile: Pile.hand}, {...deck[1], pile: Pile.hand} ]
+  let cards: Array<TCard> = [ {...deck[0], pile: TPile.hand}, {...deck[0], pile: TPile.hand}, {...deck[1], pile: TPile.hand} ]
   // let hand = [ {...deck[0]}, {...deck[0]}, {...deck[1]} ];
   // function draw(e: MouseEvent): void {
   //   topFlipped = !topFlipped;
@@ -27,7 +27,7 @@
 </svelte:head>
 
 <section>
-  <!-- <Deck on:click={draw}>Vjjjj
+  <!-- <Deck on:click={draw}>
     {#key "deck"+cardId}
     <Card 
       title={deck[0].title} 

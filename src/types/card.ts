@@ -6,7 +6,8 @@ type TCard = {
   cost: Array<TCost>,
   text: string,
   effects: Array<TEffect>,
-  pile: TPile,
+  pile: TPile | null,
+
 }
 
 export default TCard;

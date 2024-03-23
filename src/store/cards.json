@@ -55,7 +55,8 @@
         "text": "Gain 1 attack.",
         "effects": [
           {
-            "type": "gain"
+            "type": "gainred",
+            "amount": 1
           }
         ]
       }
