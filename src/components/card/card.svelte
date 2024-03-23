@@ -6,7 +6,8 @@
 <button
   class="card"
   style:transform={flipped ? 'rotateY(180deg)' : ''}
-  on:click={() => flipped = !flipped}
+  on:click
+  on:drag
 >
   <div class="front">
     <div class="price">
@@ -37,21 +38,17 @@
 <style>
   .card {
     position: relative;
-    aspect-ratio: 2.5 / 3.5;
-    font-size: min(2vw, 3.5vh, 1.5rem);
-    height: 18em;
+    aspect-ratio: var(--card-aspect-ratio);
+    font-size: var(--card-font-size);
+    height: var(--card-height);
     background: var(--color-bg-0);
-    border-radius: 1em;
+    border-radius: var(--card-border-radius);
     transform: rotateY(0);
     transition: transform 0.4s;
     transform-style: preserve-3d;
     padding: 0;
     user-select: none;
     cursor: pointer;
-  }
-
-  .card.flipped {
-    transform: rotateY(180deg);
   }
 
   .front, .back {
@@ -64,11 +61,10 @@
     left: 0;
     top: 0;
     backface-visibility: hidden;
-    border-radius: 1em;
+    border-radius: var(--card-border-radius);
     border: 1px solid var(--color-theme-2);
     box-sizing: border-box;
-    padding: 1em;
-    padding-top: 0.5em;
+    padding: var(--card-padding);
   }
 
   .front {

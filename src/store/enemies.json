@@ -1,74 +1,77 @@
 {
-  {
-    "name": "Goblin",
-    "health": 10,
-    "attack": 2,
-    "defense": 1,
-    "gold": 5,
-    "exp": 10
-  },
-  {
-    "name": "Orc",
-    "health": 15,
-    "attack": 3,
-    "defense": 2,
-    "gold": 10,
-    "exp": 15
-  },
-  {
-    "name": "Troll",
-    "health": 20,
-    "attack": 4,
-    "defense": 3,
-    "gold": 15,
-    "exp": 20
-  },
-  {
-    "name": "Dragon",
-    "health": 30,
-    "attack": 5,
-    "defense": 4,
-    "gold": 20,
-    "exp": 30
-  }, 
-  {
-    "name": "Giant",
-    "health": 50,
-    "attack": 7,
-    "defense": 5,
-    "gold": 30,
-    "exp": 50
-  },
-  {
-    "name": "Wyvern",
-    "health": 100,
-    "attack": 10,
-    "defense": 8,
-    "gold": 50,
-    "exp": 100
-  },
-  {
-    "name": "Golem",
-    "health": 150,
-    "attack": 15,
-    "defense": 10,
-    "gold": 75,
-    "exp": 150
-  },
-  {
-    "name": "Kraken",
-    "health": 200,
-    "attack": 20,
-    "defense": 12,
-    "gold": 100,
-    "exp": 200
-  },
-  {
-    "name": "Minotaur",
-    "health": 250,
-    "attack": 25,
-    "defense": 15,
-    "gold": 125,
-    "exp": 250
-  }
+  "enemies": 
+    [
+      {
+        "name": "Goblin",
+        "health": 10,
+        "attack": 2,
+        "defense": 1,
+        "gold": 5,
+        "exp": 10
+      },
+      {
+        "name": "Orc",
+        "health": 15,
+        "attack": 3,
+        "defense": 2,
+        "gold": 10,
+        "exp": 15
+      },
+      {
+        "name": "Troll",
+        "health": 20,
+        "attack": 4,
+        "defense": 3,
+        "gold": 15,
+        "exp": 20
+      },
+      {
+        "name": "Dragon",
+        "health": 30,
+        "attack": 5,
+        "defense": 4,
+        "gold": 20,
+        "exp": 30
+      }, 
+      {
+        "name": "Giant",
+        "health": 50,
+        "attack": 7,
+        "defense": 5,
+        "gold": 30,
+        "exp": 50
+      },
+      {
+        "name": "Wyvern",
+        "health": 100,
+        "attack": 10,
+        "defense": 8,
+        "gold": 50,
+        "exp": 100
+      },
+      {
+        "name": "Golem",
+        "health": 150,
+        "attack": 15,
+        "defense": 10,
+        "gold": 75,
+        "exp": 150
+      },
+      {
+        "name": "Kraken",
+        "health": 200,
+        "attack": 20,
+        "defense": 12,
+        "gold": 100,
+        "exp": 200
+      },
+      {
+        "name": "Minotaur",
+        "health": 250,
+        "attack": 25,
+        "defense": 15,
+        "gold": 125,
+        "exp": 250
+      }
+    ]
 }

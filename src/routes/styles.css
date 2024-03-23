@@ -13,6 +13,11 @@
 	--color-text: rgba(0, 0, 0, 0.7);
 	--column-width: 42rem;
 	--column-margin-top: 4rem;
+  --card-font-size: min(2vw, 2vh, 1rem);
+  --card-aspect-ratio: 2.5 / 3.5;
+  --card-height: 14em;
+  --card-border-radius: 1em;
+  --card-padding: 0.5em 1em 1em 1em;
 	font-family: var(--font-body);
 	color: var(--color-text);
 }
