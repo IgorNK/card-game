@@ -7,4 +7,4 @@ export type TEnemy = {
   defense: number,
   gold: number,
   exp: number
-}
+};

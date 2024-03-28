@@ -9,4 +9,4 @@ export type TCard = {
   text: string,
   effects: Array<TEffect>,
   pile: TPile | null,
-}
+};

@@ -11,4 +11,4 @@ export type TPlayerStats = {
     exp: number,
     expNext: number,
     handSize: number,
-}
+};
