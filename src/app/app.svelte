@@ -4,7 +4,7 @@
   import BattleScreen from "./battle-screen/battle-screen.svelte";
   import * as assets from "../data/assets.json";
   import * as maps from "../data/maps.json";
-  import type { TMap, TTileset } from "../types";
+  import type { TMapAsset, TTilesetAsset } from "../types";
   
   let canvas: HTMLCanvasElement;
   let scene: MainScene;
@@ -13,9 +13,9 @@
     scene = new MainScene(canvas);
     scene.init();
     scene.setEnvironment(assets.hdris.white);
-    const map: TMap = maps.dungeon;
-    const tileset: TTileset = assets.tilesets.dungeon;
-    scene.loadMap({ map, tileset });
+    const mapAsset: TMapAsset = maps.dungeon;
+    const tileset: TTilesetAsset = assets.tilesets.dungeon;
+    scene.loadMap({ mapAsset, tileset });
   })  
 </script>
 

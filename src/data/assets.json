@@ -6,7 +6,8 @@
         "dungeon": {
             "tileSize": {
               "x": 1,
-              "y": 1
+              "y": 1,
+              "z": 1
             },
             "scale": 10,
             "tiles": {
@@ -20,7 +21,14 @@
                 "wall-half": "/models/dungeon/wall-half.glb",
                 "stairs": "/models/dungeon/stairs.glb",
                 "column": "/models/dungeon/column.glb",
-                "dirt": "/models/dungeon/dirt.glb"
+                "dirt": "/models/dungeon/dirt.glb",
+                "barrel": "/models/dungeon/barrel.glb",
+                "treasure": "/models/dungeon/chest.glb",
+                "door": "/models/dungeon/gate.glb",
+                "key": "/models/dungeon/coin.glb",
+                "boss": "/models/dungeon/character-orc.glb",
+                "playerStart": "/models/dungeon/character-human.glb",
+                "doorLocked": "/models/dungeon/gate.glb"
             }
         }
     }

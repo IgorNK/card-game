@@ -1,7 +1,8 @@
-export type TTileset = {
+export type TTilesetAsset = {
     tileSize: {
       x: number,
       y: number,
+      z: number,
     },
     scale: number,
     tiles: {
