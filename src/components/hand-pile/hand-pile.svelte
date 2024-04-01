@@ -22,6 +22,7 @@
 <ul class="pile">
   {#each $cards.filter(card => card.pile === pile) as card (card.uid)}
     <li
+      class=card
       in:receive={{ key: card.uid }}
       out:send={{ key: card.uid }}
       animate:flip={{ duration: 200 }}
@@ -39,9 +40,29 @@
     list-style-type: none;
     margin: 0;
     padding: 0;
-    aspect-ratio: var(--card-aspect-ratio);
     font-size: var(--card-font-size);
     height: var(--card-height);
+    position: relative;
+  }
+
+  .card {
+    transition: 0.4s ease-out;
+    left: 0;
+    position: relative;
+  }
+
+  .card:not(:first-child) {
+    margin-left: -4em;
+  }
+
+  .card:hover {
+    transform: translateY(-2em);
+    transition: 0.4s ease-out;
+  }
+
+  .card:hover ~ .card {
+    left: 2em;
+    transition: 0.4s ease-out;
   }
 
 </style>

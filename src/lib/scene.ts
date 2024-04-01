@@ -1,11 +1,28 @@
-import { ACESFilmicToneMapping, DataTexture, EquirectangularReflectionMapping, PerspectiveCamera, Scene, Mesh, InstancedMesh, WebGLRenderer, Matrix4, DirectionalLight, SphereGeometry, MeshBasicMaterial, Group, 
-Vector3 } from "three";
-import { FirstPersonControls } from "three/addons/controls/FirstPersonControls.js";
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { 
+  ACESFilmicToneMapping, 
+  DataTexture, 
+  EquirectangularReflectionMapping, 
+  PerspectiveCamera, 
+  Scene, 
+  Mesh, 
+  InstancedMesh, 
+  WebGLRenderer, 
+  Matrix4, 
+  DirectionalLight, 
+  SphereGeometry, 
+  MeshBasicMaterial, 
+  Group, 
+  Vector3, 
+  MathUtils, 
+  Quaternion
+} from "three";
 import { GLTFLoader, type GLTF } from "three/addons/loaders/GLTFLoader.js";
 import { RGBELoader } from "three/addons/loaders/RGBELoader.js";
-import { Direction, Node, Graph, shortestPath } from "./navigation";
+import { Direction, Node, Graph, shortestPath, cw, ccw, opposite, strToDirection } from "./navigation";
 import { Map, type TMapData, type TPosition, CharDict } from "./map";
+import type { TMapAsset, TTilesetAsset, TInputCallbacks } from "../types";
+import * as TWEEN from "@tweenjs/tween.js";
+import {  } from "three";
 
 type TNode = {
   position: TPosition,
@@ -30,11 +47,12 @@ class MainScene {
     this.renderer.toneMapping = ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1;
     this.createLights();
+    this.init();
   }
 
   async loadMap({ mapAsset, tileset}: { mapAsset: TMapAsset, tileset: TTilesetAsset }) {
     this.nodeGraph = this.buildNodeGraph(mapAsset, tileset);
-    this.createNodeSpheres(this.nodeGraph);   
+    //this.createNodeSpheres(this.nodeGraph);   
     this.setupCamera();
     const map = new Map();
     await map.load(mapAsset, tileset, this.gltfLoader);
@@ -46,11 +64,41 @@ class MainScene {
     });     
   }
 
+  registerControls(): TInputCallbacks {
+    let callbacks: TInputCallbacks = {
+      onLeft: () => {
+        this.cameraDirection = ccw(this.cameraDirection);
+        this.rotateCamera(this.cameraDirection);
+      },
+      onRight: () => {
+        this.cameraDirection = cw(this.cameraDirection);
+        this.rotateCamera(this.cameraDirection);
+      },
+      onUp: () => {
+        if (!this.controlsEnabled) {
+          return;
+        }
+        const node = this.cameraNode?.neighbours[this.cameraDirection];        
+        if (node !== undefined) {  
+          if (node !== null) {
+            this.cameraNode = node;
+          }        
+          this.moveCamera(node);
+        }        
+      },
+      onDown: () => {
+        this.cameraDirection = opposite(this.cameraDirection);
+        this.rotateCamera(this.cameraDirection);
+      }
+    };
+    return callbacks;
+  }
+
   private buildNodeGraph(
     map: TMapAsset, 
     tileset: TTilesetAsset
   ): Graph<TNode> {
-    const transformMap: Array<Array<Node<Matrix4> | null>> = [];
+    const transformMap: Array<Array<Node<TNode> | null>> = [];
     const graph = new Graph<TNode>();
     const { tileSize, scale } = tileset;
     for (let y = 0; y < map.tiles.length; y++) {
@@ -73,8 +121,9 @@ class MainScene {
           const neighbours = getTopLeftNeighbours(coords);
           neighbours.forEach(neighbour => {
             const { direction, coords: { x: x2, y: y2 }} = neighbour;
-            if (transformMap[y2] && transformMap[y2][x2]) {
-              graph.addEdge(node, transformMap[y2][x2], direction);
+            const targetNode = transformMap[y2][x2];
+            if (targetNode) {
+              graph.addEdge(node, targetNode, direction);
             }
           })
         } else {
@@ -143,7 +192,8 @@ class MainScene {
     window.requestAnimationFrame(() => this.render());
     if (this.camera) {
       this.renderer.render(this.scene, this.camera);
-    }    
+    }
+    TWEEN.update();
   }
 
   private resize() {
@@ -159,24 +209,123 @@ class MainScene {
   }
 
   private setupCamera() {
-    console.log('setup camera');
     this.camera = new PerspectiveCamera(75, document.documentElement.clientWidth / document.documentElement.clientHeight, 0.1, 1000);
     
     // this.controls = new OrbitControls( this.camera, this.renderer.domElement);
-    this.controls = new FirstPersonControls(this.camera, this.renderer.domElement);
     // this.cameraRig.add(this.camera);
-    const playerNode = this.nodeGraph.nodes.find(node => node.value.entity === 'playerStart');
+    const playerNode = this.nodeGraph?.nodes.find(node => node.value.entity === 'playerStart');
+    if (!playerNode) {
+      console.error("EXCEPTION: player node not found in node graph");
+      return;
+    }
     const playerPos = new Vector3().setFromMatrixPosition(playerNode.value.position.transform);
-    const targetNode = playerNode.neighbours[Direction.front];
+    this.cameraNode = playerNode;
+    let targetNode: Node<TNode> | null = null;
+    for (const [direction, neighbour] of Object.entries(playerNode.neighbours)) {
+      if (neighbour) {
+        targetNode = neighbour;
+        this.cameraDirection = strToDirection(direction) || Direction.front;
+        break;
+      }
+    }
+    if (!targetNode) {
+      console.error("EXCEPTION: player start doesn't have any neighbouring nodes");
+      return;
+    }
+
     const targetPos = new Vector3().setFromMatrixPosition(targetNode.value.position.transform);
-    console.log(playerPos);
-    console.log(targetPos);
     const cameraMatrix = new Matrix4().setPosition(playerPos);
     this.camera.applyMatrix4(cameraMatrix);
     this.camera.updateMatrix();
     this.camera.lookAt(targetPos);
-    // this.camera.position.z = -50;
-    // this.camera.position.y = 50;
+  }
+
+  private async rotateCamera(dir: Direction) {
+    if (!this.camera) {
+      return;
+    }
+    let newRotation;
+    switch (dir) {
+      case (Direction.left): {
+        newRotation = 90;
+        break;
+      }
+      case (Direction.right): {
+        newRotation = -90;
+        break;
+      }
+      case (Direction.front): {
+        newRotation = 0;
+        break;
+      }
+      case (Direction.back): {
+        newRotation = 180;
+        break;
+      }
+    }
+    let to = new Quaternion().setFromAxisAngle(new Vector3(0, 1, 0), MathUtils.degToRad(newRotation));
+    let factor = {t: 0};
+    const cameraTween = new TWEEN.Tween(factor).to({t: 1}, this.rotateMs).onUpdate(() => {
+      if (this.camera) {
+        this.camera.quaternion.slerp(to, factor.t);
+      }
+    }).start();
+  }
+
+  private async moveCamera(node: Node<TNode> | null) {
+    if (!this.camera) {
+      return;
+    }
+    if (node === null) {
+      this.bumpCamera();
+      return;
+    }
+    
+    const from = new Vector3().setFromMatrixPosition(this.camera.matrix);
+    const to = new Vector3().setFromMatrixPosition(node.value.position.transform);
+    let factor = {t: 0};
+    const cameraTween = new TWEEN.Tween(factor).to({t: 1}, this.moveMs).onUpdate(() => {
+      if (this.camera) {
+        const current = new Vector3().lerpVectors(from, to, factor.t);
+        this.camera.position.copy(current);
+      }
+    })
+    .onStart(() => {
+      this.controlsEnabled = false;
+    })
+    .onComplete(() => {
+      this.controlsEnabled = true;
+    })
+    .start();
+  }
+
+  private async bumpCamera() {
+    if (!this.camera) {
+      return;
+    }
+    const from = new Vector3().setFromMatrixPosition(this.camera.matrix);
+    let direction = new Vector3();
+    this.camera.getWorldDirection(direction);
+    const to = from.clone().add(direction.multiplyScalar(this.bumpLength));
+    let factor = {t: 0};
+    const cameraTweenA = new TWEEN.Tween(factor).to({t: 1}, this.bumpMs).onUpdate(() => {
+      if (this.camera) {
+        const current = new Vector3().lerpVectors(from, to, factor.t);
+        this.camera.position.copy(current);
+      }
+    }).onStart(() => {
+      this.controlsEnabled = false;
+    });
+    const cameraTweenB = new TWEEN.Tween(factor).to({t: 1}, this.bumpMs).onUpdate(() => {
+      if (this.camera) {
+        const current = new Vector3().lerpVectors(to, from, factor.t);
+        this.camera.position.copy(current);
+      }
+    }).onComplete(() => {
+      this.controlsEnabled = true;
+    });
+    cameraTweenA.chain(cameraTweenB);
+    cameraTweenA.start();
   }
 
   private createLights() {
@@ -187,11 +336,16 @@ class MainScene {
 
   private nodeGraph: Graph<TNode> | null = null;
 
-  private cameraRig: Group = new Group();
-  private camera: PerspectiveCamera | null;
+  controlsEnabled = true;
+  private camera: PerspectiveCamera | null = null;
+  private cameraDirection: Direction = Direction.front;
+  private cameraNode: Node<TNode> | null = null;
+  private rotateMs = 300;
+  private moveMs = 300;
+  private bumpMs = 100;
+  private bumpLength = 2;
   private renderer: WebGLRenderer;
-  //private controls: FirstPersonControls | null = null;
-  private controls: OrbitControls | null = null;
+  // private controls: OrbitControls | null = null;
   private scene: Scene = new Scene();
   private gltfLoader: GLTFLoader = new GLTFLoader();
   private rbgeLoader: RGBELoader = new RGBELoader();

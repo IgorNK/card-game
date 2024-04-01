@@ -1,4 +1,5 @@
-import { Mesh, InstancedMesh, Matrix4, Vector3, Object3D } from "three";
+import { Mesh, InstancedMesh, Matrix4, Vector3, Object3D, SkinnedMesh } from "three";
+import type { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import type { TMapAsset, TTilesetAsset } from "../types";
 import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
 
@@ -11,7 +12,7 @@ type TPosition = {
   coords: { x: number, y: number },
 };
 
-const CharDict = {
+const CharDict: { [key: string]: string} = {
   "#": "wall",
   ".": "floor",
   "D": "door",
@@ -44,13 +45,13 @@ class Map {
       const mesh = gltf.scene.children[0] as Mesh | undefined;
       const geo = mesh?.geometry.clone();
       const mat = mesh?.material;
-      const instancedMesh = new InstancedMesh(geo, mat, transforms.length);
+      const instancedMesh: InstancedMesh = new InstancedMesh(geo, mat, transforms.length);
       instancedMesh.castShadow = true;
       instancedMesh.receiveShadow = true;
       transforms.forEach((transform, index) => {
         instancedMesh.setMatrixAt(index, transform);
       });
-      instancedMesh.needsUpdate = true;
+      instancedMesh.instanceMatrix.needsUpdate = true;
       this.tiles.push(instancedMesh);
     }
   }
@@ -66,8 +67,9 @@ class Map {
         continue;
       }
       const gltf = await gltfLoader.loadAsync(tileset.tiles[entity]);
-      gltf.scene.traverse(function(object) {
-        if (object.isMesh) {
+      gltf.scene.traverse(function(object: Object3D) {
+        const mesh: Mesh = <Mesh>object;
+        if (mesh) {
           object.castShadow = true;
           object.receiveShadow = true;
         }
@@ -107,15 +109,16 @@ class Map {
 
   private clearMap() {
     this.tiles.forEach(tile => {
-      scene.remove(tile);
+      tile.removeFromParent;
       tile.dispose();
     });
     this.tiles = [];
 
     for (const entity of this.entities) {
-      scene.remove(entity);
-      scene.traverse(function(child) {
-        if (child.isSkinnedMesh) child.skeleton.dispose();
+      entity.removeFromParent;
+      entity.traverse(function(child) {
+        const skinnedMesh = <SkinnedMesh>child;
+        if (skinnedMesh) skinnedMesh.skeleton.dispose();
       });
     }
     this.entities = [];
@@ -126,4 +129,4 @@ class Map {
   
 }
 
-export { Map, TMapData, TPosition, CharDict };
+export { Map, type TMapData, type TPosition, CharDict };

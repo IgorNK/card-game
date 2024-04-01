@@ -13,11 +13,15 @@
   import { createCardsStore } from '../../store/cards';
   import { createEnemiesStore } from '../../store/enemies';   
 
+  type TDesignKey = keyof typeof cardsJson.designs;
+
   const cardData: Array<TCard> = Array.from(cardsJson.cards).map(data => {
+    const design = data.design as TDesignKey;    
     return {
       uid: 0,
       ...data,
       pile: null,
+      design: cardsJson.designs[design],
     }
   });
   const cards = createCardsStore([ 
@@ -130,23 +134,70 @@
     </li>
   {/each}
   </ul>
-  <DeckPile flipped={deckFlipped} {cards} />
-  <UsePile {effectHandler} {cards} />
-  <HandPile size={playerStats.handSize} {cards} />
-  <DropPile {cards} />
-  <PlayerStats {playerStats} />
-  <button class=endTurn on:click={endTurnHandler}>End Turn</button>
+  <div class=use>
+    <UsePile {effectHandler} {cards} />
+  </div>  
+  <div class=deck>
+    <DeckPile flipped={deckFlipped} {cards} />
+  </div>
+  <div class=hand>
+    <HandPile size={playerStats.handSize} {cards} />
+  </div>
+  <div class=drop>
+    <DropPile {cards} />
+  </div>
+  <div class=stats>
+    <PlayerStats {playerStats} />
+    <button class=endTurn on:click={endTurnHandler}>End Turn</button>
+  </div>
+  
 </div>
 
 <style>
   .battle-screen {
-    display: flex;
-    flex-direction: column;
+    margin: 16em;
+    width: 100%;
+    display: grid;
+    grid-template-areas:
+      ".        enemies   enemies   ."
+      ".        use       .         ."
+      "hand     hand      hand      hand"
+      "deck     stats     stats     drop";
+    justify-content: center;
+    align-items: center;
   }
 
   .enemies {
-    display: flex;
-    flex-direction: row;
+    display: grid;
+    grid-auto-flow: column dense;
     list-style-type: none;
+    grid-area: enemies;
+  }
+
+  .use {
+    grid-area: use;
+  }
+
+  .deck {
+    grid-area: deck;
+  }
+
+  .hand {
+    grid-area: hand;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .drop {
+    grid-area: drop;
+  }
+
+  .stats {
+    grid-area: stats;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-items: center;
   }
 </style>

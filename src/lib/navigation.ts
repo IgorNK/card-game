@@ -5,6 +5,47 @@ enum Direction {
   back = "back"
 };
 
+function strToDirection(dir: string): Direction | null {
+  switch (dir) {
+    case "left":
+      return Direction.left;
+    case "right":
+      return Direction.right;
+    case "front":
+      return Direction.front;
+    case "back":
+      return Direction.back;
+    default:
+      return null;
+  }
+}
+
+function cw(direction: Direction) {
+  switch (direction) {
+    case Direction.left:
+      return Direction.front;
+    case Direction.front:
+      return Direction.right;
+    case Direction.right:
+      return Direction.back;
+    case Direction.back:
+      return Direction.left;
+  }
+}
+
+function ccw(direction: Direction) {
+  switch (direction) {
+    case Direction.left:
+      return Direction.back;
+    case Direction.back:
+      return Direction.right;
+    case Direction.right:
+      return Direction.front;
+    case Direction.front:
+      return Direction.left;
+  }
+}
+
 function opposite(direction: Direction) {
   switch (direction) {
     case Direction.left:
@@ -21,7 +62,12 @@ function opposite(direction: Direction) {
 class Node<T> {  
   constructor(value: T) {
     this.value = value;
-    this.neighbours = {};
+    this.neighbours = {
+      left: null,
+      right: null,
+      front: null,
+      back: null,
+    };
   }
 
   addNeighbour(node: Node<T>, direction: Direction) {
@@ -30,7 +76,7 @@ class Node<T> {
 
   value: T;
   neighbours: {
-    [key: Direction]: Node<T>,
+    [key in Direction]: Node<T> | null;
   };
 }
 
@@ -54,10 +100,10 @@ class Graph<T> {
     this.nodes.forEach(callback);
   }
   
-  private nodes: Node<T>[];
+  nodes: Node<T>[];
 }
 
-function shortestPath(
+function shortestPath<T>(
   graph: Graph<T>, 
   start: Node<T>, 
   target: Node<T>
@@ -77,7 +123,7 @@ function shortestPath(
     visited.add(currentNode);
 
     for (const neighbour of Object.values(currentNode.neighbours)) {
-      if (!visited.has(neighbour)) {
+      if (neighbour && !visited.has(neighbour)) {
         queue.push([neighbour, [...currentPath, neighbour]]);
       }
     }
@@ -85,4 +131,4 @@ function shortestPath(
   return null;
 }
 
-export { Direction, Node, Graph, shortestPath };
+export { Direction, Node, Graph, shortestPath, cw, ccw, opposite, strToDirection };
