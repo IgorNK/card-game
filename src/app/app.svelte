@@ -6,7 +6,8 @@
   import * as assets from "../data/assets.json";
   import * as maps from "../data/maps.json";
   import type { TMapAsset, TTilesetAsset, TInputCallbacks } from "../types";
-  import CurvedText from '../components/curved-text/curved-text.svelte';
+  import Panel from '../components/panel/panel.svelte';
+  import ProgressBar from '../components/progressbar/progressbar.svelte';
   
   let canvas: HTMLCanvasElement;
   let scene: MainScene;
@@ -26,13 +27,34 @@
     callbacks = scene.registerControls();
   })  
 </script>
-<!-- <CurvedText /> -->
+
+<!-- <Panel image="/textures/ui/panel_01.png">
+  <ProgressBar value={50} />
+  <ProgressBar value={30} />
+  <ProgressBar value={5} />
+  <ProgressBar value={5} />
+  <ProgressBar value={5} />
+</Panel>
+<Panel image="/textures/ui/panel_00.png">
+  <ProgressBar value={98} />
+  <ProgressBar value={99} />
+  <ProgressBar value={100} />
+</Panel>
+<Panel image="/textures/ui/panel_02.png" style="border-image-slice: 30%;">
+  <div class=inner>
+    <ProgressBar value={98} />
+    <ProgressBar value={99} />
+    <ProgressBar value={100} />
+  </div>  
+  <div class=overlay />
+</Panel> -->
+
 <div class=main>
   <div class="gui">
     <!-- <WalkControls {callbacks} /> -->
     <BattleScreen />
   </div>
-  <!-- <canvas bind:this={canvas} /> -->
+  <canvas bind:this={canvas} />
 </div>
 
 <style>
@@ -54,4 +76,19 @@
     justify-content: center;
     align-items: center;
   }
+
+  .inner {
+    z-index: 0;
+  }
+
+  .overlay {
+        position: absolute;
+        top: 1.5rem;
+        bottom: 1.6rem;
+        left: 1.8rem;
+        right: 1.8rem;
+        background: linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.9) 5%, rgba(0, 0, 0, 0.5) 10%, rgba(0, 0, 0, 0.1) 20%, rgba(0, 0, 0, 0) 92%, rgba(0, 0, 0, 0.2) 100%),
+                    linear-gradient(90deg, rgba(0, 0, 0, 0.5) 0, rgba(0, 0, 0, 0) 8%, rgba(0, 0, 0, 0) 92%, rgba(0, 0, 0, 0.5) 100%);
+        z-index: 1;
+    }
 </style>
