@@ -51,8 +51,8 @@
 
 <div class=main>
   <div class="gui">
-    <!-- <WalkControls {callbacks} /> -->
-    <BattleScreen />
+    <WalkControls {callbacks} />
+    <!-- <BattleScreen /> -->
   </div>
   <canvas bind:this={canvas} />
 </div>
