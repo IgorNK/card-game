@@ -1,0 +1,36 @@
+{
+    "hdris": {
+        "white": "/textures/cubemaps/kloofendal_misty_morning_puresky_1k.hdr"
+    },
+    "tilesets": {
+        "dungeon": {
+            "tileSize": {
+              "x": 1,
+              "y": 1,
+              "z": 1
+            },
+            "scale": 10,
+            "tiles": {
+                "floor": "/models/dungeon/floor.glb",
+                "floor-detail": "/models/dungeon/floor-detail.glb",
+                "wall": "/models/dungeon/wall.glb",
+                "wall-structure": "/models/dungeon/wall-structure.glb",
+                "wall-support": "/models/dungeon/wall-support.glb",
+                "wall-opening": "/models/dungeon/wall-opening.glb",
+                "wall-narrow": "/models/dungeon/wall-narrow.glb",
+                "wall-half": "/models/dungeon/wall-half.glb",
+                "stairs": "/models/dungeon/stairs.glb",
+                "column": "/models/dungeon/column.glb",
+                "dirt": "/models/dungeon/dirt.glb",
+                "barrel": "/models/dungeon/barrel.glb",
+                "treasure": "/models/dungeon/chest.glb",
+                "door": "/models/dungeon/gate.glb",
+                "key": "/models/dungeon/coin.glb",
+                "boss": "/models/dungeon/character-orc.glb",
+                "playerStart": "/models/dungeon/character-human.glb",
+                "doorLocked": "/models/dungeon/gate.glb"
+            }
+        }
+    }
+    
+}

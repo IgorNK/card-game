@@ -1,154 +1,94 @@
 <script lang="ts">
-  import { send, receive } from "../utils/transition";
-  import { flip } from 'svelte/animate';
-  import DeckPile from '../components/deck-pile/deck-pile.svelte';
-  import UsePile from '../components/use-pile/use-pile.svelte';
-  import DropPile from '../components/drop-pile/drop-pile.svelte';
-  import HandPile from '../components/hand-pile/hand-pile.svelte';
-  import * as cardsJson from "../data/cards.json";
-  import * as enemiesJson from "../data/enemies.json"
-  import { TPile, type TCard, type TCost, type TEffect, type TEnemy, type TPlayerStats } from "../types";
-  import { createCardsStore } from '../store/cards';
-  import { createEnemiesStore } from '../store/enemies';
-  import Enemy from '../components/enemy/enemy.svelte';
-  import PlayerStats from "../components/player-stats/player-stats.svelte";
-
-  export let canvas: HTMLCanvasElement;
-
-  const cardData: Array<TCard> = Array.from(cardsJson.cards).map(data => {
-    return {
-      uid: 0,
-      ...data,
-      pile: null,
-    }
-  });
-  const cards = createCardsStore([ 
-    {...cardData[0], pile: TPile.hand}, 
-    {...cardData[0], pile: TPile.hand}, 
-    {...cardData[1], pile: TPile.hand},
-    {...cardData[0], pile: TPile.deck},
-    {...cardData[0], pile: TPile.deck},
-    {...cardData[0], pile: TPile.deck},
-    {...cardData[1], pile: TPile.deck},
-    {...cardData[2], pile: TPile.deck},
-  ]);
-  const enemyData: Array<TEnemy> = Array.from(enemiesJson.enemies).map(data => {
-    return {
-      uid: 0,
-      ...data,
-      currentHealth: data.health,
-    }
-  });
-  const enemies = createEnemiesStore([
-    {...enemyData[0]},
-    {...enemyData[1]},
-  ]);
-  let playerStats: TPlayerStats = {
-    health: 10,
-    currentHealth: 10,
-    defense: 1,
-    manaRed: 3,
-    currentManaRed: 3,
-    manaBlue: 3,
-    currentManaBlue: 3,
-    manaGreen: 3,
-    currentManaGreen: 3,
-    exp: 0,
-    expNext: 30,
-    handSize: 5,
+  import { onMount } from 'svelte';
+  import { MainScene } from "$lib/scene";
+  import BattleScreen from "./battle-screen/battle-screen.svelte";
+  import WalkControls from './walk-controls/walk-controls.svelte';
+  import * as assets from "../data/assets.json";
+  import * as maps from "../data/maps.json";
+  import type { TMapAsset, TTilesetAsset, TInputCallbacks } from "../types";
+  import Panel from '../components/panel/panel.svelte';
+  import ProgressBar from '../components/progressbar/progressbar.svelte';
+  
+  let canvas: HTMLCanvasElement;
+  let scene: MainScene;
+  let callbacks: TInputCallbacks = {
+    onLeft: () => {},
+    onRight: () => {},
+    onUp: () => {},
+    onDown: () => {}
   };
 
-  const effectHandler = (effect: TEffect) => {
-    console.log('effect handler');
-    switch (effect.type) {
-      case "damage": {
-        break;
-      }
-      case "defense": {
-        break;
-      }
-      case "health": {
-        break;
-      }
-    }  
-  }
-
-  $: usedPile = $cards.filter(card => card.pile === TPile.use);
-  $: deckPile = $cards.filter(card => card.pile === TPile.deck);
-  $: handPile = $cards.filter(card => card.pile === TPile.hand);
-  $: usedCard = usedPile.length > 0 ? usedPile[0] : null;
-
-  const enemyEffectHandler = (enemy: TEnemy) => {
-    console.log('enemy effect handler');
-    if (!usedCard) {
-      return;
-    }
-    for (let effect of usedCard.effects) {
-      switch (effect.type) {
-        case "damage": {
-          enemies.changeHealth(enemy, -effect.amount);
-          cards.move(usedCard, TPile.drop);
-          break;
-        }
-      }
-    }
-  }
-
-  const enemyAct = async (enemy: TEnemy) => {
-    console.log(`${enemy.name}'s turn'`);
-  }
-
-  let deckFlipped = true;
-
-  const drawCard = async() => {
-    if (deckPile.length < 1) {
-      return;
-    }
-    deckFlipped = false;
-    await new Promise(resolve => setTimeout(resolve, 200));
-    cards.move(deckPile[0], TPile.hand);
-    deckFlipped = true;
-  }
-
-  const endTurnHandler = async (e: MouseEvent) => {
-    for (let enemy of $enemies) {
-      await enemyAct(enemy);
-    }
-    while (handPile.length < playerStats.handSize && deckPile.length ) {
-      await drawCard();
-    }
-  }
+  onMount(() => {
+    scene = new MainScene(canvas);
+    scene.setEnvironment(assets.hdris.white);
+    const mapAsset: TMapAsset = maps.dungeon;
+    const tileset: TTilesetAsset = assets.tilesets.dungeon;
+    scene.loadMap({ mapAsset, tileset });
+    callbacks = scene.registerControls();
+  })  
 </script>
 
+<!-- <Panel image="/textures/ui/panel_01.png">
+  <ProgressBar value={50} />
+  <ProgressBar value={30} />
+  <ProgressBar value={5} />
+  <ProgressBar value={5} />
+  <ProgressBar value={5} />
+</Panel>
+<Panel image="/textures/ui/panel_00.png">
+  <ProgressBar value={98} />
+  <ProgressBar value={99} />
+  <ProgressBar value={100} />
+</Panel>
+<Panel image="/textures/ui/panel_02.png" style="border-image-slice: 30%;">
+  <div class=inner>
+    <ProgressBar value={98} />
+    <ProgressBar value={99} />
+    <ProgressBar value={100} />
+  </div>  
+  <div class=overlay />
+</Panel> -->
+
 <div class=main>
-  <ul class=enemies>
-  {#each $enemies as enemy (enemy.uid)}
-    <li
-      in:receive={{ key: enemy.uid }}
-      out:send={{ key: enemy.uid }}
-      animate:flip={{ duration: 200 }}
-    >
-      <Enemy on:click={() => enemyEffectHandler(enemy)} {enemy} />
-    </li>
-  {/each}
-  </ul>
-  <DeckPile flipped={deckFlipped} {cards} />
-  <UsePile {effectHandler} {cards} />
-  <HandPile size={playerStats.handSize} {cards} />
-  <DropPile {cards} />
-  <PlayerStats {playerStats} />
-  <button class=endTurn on:click={endTurnHandler}>End Turn</button>
+  <div class="gui">
+    <WalkControls {callbacks} />
+    <!-- <BattleScreen /> -->
+  </div>
+  <canvas bind:this={canvas} />
 </div>
 
 <style>
   .main {
     display: flex;
+    width: 100%;
+    height: 100%;
     flex-direction: column;
+    position: relative;
+    justify-content: center;
+    align-items: center;
   }
 
-  .enemies {
+  .gui {
+    position: absolute;
+    width: 100%;
+    height: 100%;
     display: flex;
-    flex-direction: row;
-    list-style-type: none;
+    justify-content: center;
+    align-items: center;
   }
+
+  .inner {
+    z-index: 0;
+  }
+
+  .overlay {
+        position: absolute;
+        top: 1.5rem;
+        bottom: 1.6rem;
+        left: 1.8rem;
+        right: 1.8rem;
+        background: linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.9) 5%, rgba(0, 0, 0, 0.5) 10%, rgba(0, 0, 0, 0.1) 20%, rgba(0, 0, 0, 0) 92%, rgba(0, 0, 0, 0.2) 100%),
+                    linear-gradient(90deg, rgba(0, 0, 0, 0.5) 0, rgba(0, 0, 0, 0) 8%, rgba(0, 0, 0, 0) 92%, rgba(0, 0, 0, 0.5) 100%);
+        z-index: 1;
+    }
 </style>

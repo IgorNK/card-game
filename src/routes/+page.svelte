@@ -1,6 +1,5 @@
 <script lang="ts">
   import App from "../app/app.svelte";
-  let canvas: HTMLCanvasElement;
 </script>
 
 <svelte:head>
@@ -9,10 +8,8 @@
 </svelte:head>
 
 <section>
-  <App {canvas} />
+  <App />
 </section>
-
-<canvas bind:this={canvas} />
 
 <style>
 

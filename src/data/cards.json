@@ -1,4 +1,8 @@
 {
+  "designs": {
+    "spell": "/textures/cards/card_design_0.png",
+    "resource": "/textures/cards/card_design_0.png"
+  },
   "cards": 
     [
       {
@@ -15,7 +19,9 @@
             "type": "damage",
             "amount": 1
           }
-        ]
+        ],
+        "image": "/textures/cards/spells/harm_0.jpeg",
+        "design": "spell"
       },
       {
         "title": "Defend",
@@ -31,7 +37,9 @@
             "type": "defense",
             "amount": 1
           }
-        ]
+        ],
+        "image": "/textures/cards/spells/shield_0.jpeg",
+        "design": "spell"
       },
       {
         "title": "Heal",
@@ -47,7 +55,9 @@
             "type": "health",
             "amount": 1
           }
-        ]
+        ],
+        "image": "/textures/cards/spells/heal_0.jpeg",
+        "design": "spell"
       },
       {
         "title": "Red Source",
@@ -58,7 +68,9 @@
             "type": "gainred",
             "amount": 1
           }
-        ]
+        ],
+        "image": "/textures/cards/spells/heal_0.jpeg",
+        "design": "spell"
       }
     ]
 }

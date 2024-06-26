@@ -3,4 +3,4 @@ export enum TPile {
   use,
   deck,
   drop
-}
+};

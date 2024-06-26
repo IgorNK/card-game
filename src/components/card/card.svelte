@@ -1,6 +1,8 @@
 <script lang="ts">
   import type { TCard } from "../../types";
   import { TPile } from "../../types";
+  import CurvedText from "../curved-text/curved-text.svelte";
+  
   export let card: TCard = {
     uid: 0,
     title: "",
@@ -8,6 +10,8 @@
     text: "",
     effects: [],
     pile: null,
+    image: "",
+    design: "",
   };
   export let flipped = false;
 </script>
@@ -19,6 +23,7 @@
   on:drag
 >
   <div class="front">
+    <img class=design src={card.design} alt="card design" />
     <div class="price">
       <slot name="price">
         <span class="symbol-green">♠</span>
@@ -26,13 +31,12 @@
       </slot>
     </div>
     <div class="title">
-      <i>{card.title}</i>
+      <!-- <i>{card.title}</i> -->
+      <CurvedText text={card.title} width={100} height={36} offsetY={4} />
     </div>
-    <div class="image">
       <slot name="image">
-        <span class="symbol">♠</span>
+        <img class=image src={card.image} />
       </slot>
-    </div>
     <div class="text">
       <slot name="text" class="textn">
         <p>{card.text}</p>
@@ -46,11 +50,12 @@
 
 <style>
   .card {
+    font-family: var(--font-card);
     position: relative;
     aspect-ratio: var(--card-aspect-ratio);
     font-size: var(--card-font-size);
     height: var(--card-height);
-    background: var(--color-bg-0);
+    /* background: var(--color-bg-0); */
     border-radius: var(--card-border-radius);
     transform: rotateY(0);
     transition: transform 0.4s;
@@ -58,6 +63,16 @@
     padding: 0;
     user-select: none;
     cursor: pointer;
+  }
+
+  .design {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    z-index: 1
   }
 
   .front, .back {
@@ -74,6 +89,7 @@
     border: 1px solid var(--color-theme-2);
     box-sizing: border-box;
     padding: var(--card-padding);
+    overflow: hidden;
   }
 
   .front {
@@ -114,6 +130,11 @@
 
   .title {
     font-weight: 700;
+    position: absolute;
+    top: 0;
+    width: 80%;
+    font-size: var(--card-title-curved-font-size);
+    z-index: 2;
   }
 
   .price {
@@ -125,25 +146,33 @@
     align-items: flex-start;
     justify-content: flex-end;
     font-size: 1em;
+    z-index: 2;
   }
 
   .image {
-    height: 50%;
-    width: 100%;
+    position: absolute;
+    top:-5%;
+    width: 120%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    z-index: 0;
   }
 
   .text {
+    position: absolute;
+    top: 60%;
     height: 50%;
     width: 100%;
+    padding: 20%;
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     align-items: stretch;
     justify-content: center;
     text-align: left;
+    z-index: 2;
   }
   
 </style>
