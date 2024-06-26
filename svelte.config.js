@@ -1,5 +1,5 @@
 import adapter from '@sveltejs/adapter-static';
-import { vitePreprocess } from '@sveltejs/kit/vite';
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -9,11 +9,10 @@ const config = {
     // If you'd like to change your Replit Deployment type, see https://kit.svelte.dev/docs/building-your-app
     // for more information on SvelteKit Adapters
 		adapter: adapter({
-      pages: 'build',
-      strict: true,
+      fallback: '404.html',
     }),
     paths: {
-      base: process.env.NODE_ENV === 'production' ? '/card-game' : '',
+      base: process.argv.includes('dev') ? '' : '/card-game',
     }
 	},
 };

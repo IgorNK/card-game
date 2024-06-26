@@ -2,6 +2,7 @@ import { Mesh, InstancedMesh, Matrix4, Vector3, Object3D, SkinnedMesh } from "th
 import type { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import type { TMapAsset, TTilesetAsset } from "../types";
 import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
+import { base } from '$app/paths';
 
 type TMapData = {
   [key: string]: Matrix4[],
@@ -41,7 +42,7 @@ class Map {
   ) {
     for (const [tile, transforms] of Object.entries(geometry)) {
       console.log(`load model: ${tile}: ${tileset.tiles[tile]}`);
-      const gltf = await gltfLoader.loadAsync(tileset.tiles[tile]);
+      const gltf = await gltfLoader.loadAsync(`${base}/` + tileset.tiles[tile]);
       const mesh = gltf.scene.children[0] as Mesh | undefined;
       const geo = mesh?.geometry.clone();
       const mat = mesh?.material;
@@ -66,7 +67,7 @@ class Map {
       if (entity === "playerStart") {
         continue;
       }
-      const gltf = await gltfLoader.loadAsync(tileset.tiles[entity]);
+      const gltf = await gltfLoader.loadAsync(`${base}/` + tileset.tiles[entity]);
       gltf.scene.traverse(function(object: Object3D) {
         const mesh: Mesh = <Mesh>object;
         if (mesh) {

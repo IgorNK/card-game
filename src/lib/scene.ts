@@ -23,6 +23,7 @@ import { Map, type TMapData, type TPosition, CharDict } from "./map";
 import type { TMapAsset, TTilesetAsset, TInputCallbacks } from "../types";
 import * as TWEEN from "@tweenjs/tween.js";
 import {  } from "three";
+import { base } from '$app/paths';
 
 type TNode = {
   position: TPosition,
@@ -175,7 +176,7 @@ class MainScene {
   }
   
   async setEnvironment(path: string) {
-    this.envMap = await this.rbgeLoader.loadAsync(path);
+    this.envMap = await this.rbgeLoader.loadAsync(`${base}/` + path);
     this.envMap.mapping = EquirectangularReflectionMapping;
     this.scene.background = this.envMap;
     this.scene.environment = this.envMap;

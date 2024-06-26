@@ -8,4 +8,4 @@ import type { TTilesetAsset } from './tileset-asset';
 import type { TInputCallbacks } from './callbacks';
 import { TPile } from './pile';
 
-export { TCard, TCost, TEffect, TEnemy, TPlayerStats, TMapAsset, TTilesetAsset, TInputCallbacks, TPile };
+export { type TCard, type TCost, type TEffect, type TEnemy, type TPlayerStats, type TMapAsset, type TTilesetAsset, type TInputCallbacks, TPile };
